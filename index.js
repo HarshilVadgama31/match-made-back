@@ -4,6 +4,7 @@ const app = express();
 const usersRouter = require("./routes/user.route");
 const chatsRouter = require("./routes/chat.route");
 const messagesRouter = require("./routes/message.route");
+const friendsRouter = require("./routes/friends.route");
 const cors = require("cors");
 
 require("dotenv").config();
@@ -19,5 +20,6 @@ app.get("/*", (req, res) => {
 app.use("/user", usersRouter);
 app.use("/chat", chatsRouter);
 app.use("/message", messagesRouter);
+app.use("/friends", friendsRouter);
 
 app.listen(3000, () => console.log("Listening on port 3000..."));

@@ -134,3 +134,12 @@ exports.updateUser2 = async (req, res) => {
       res.send({ data: error, error: true });
     });
 };
+
+
+const setFavourites = (req, res) => {
+  const { } = req.body;
+
+}
+const favourites = (req, res) => {
+  
+}
