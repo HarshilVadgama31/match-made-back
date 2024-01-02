@@ -6,7 +6,7 @@ const friends = mongoose.Schema(
     receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "users" },
     status: { type: String },
   },
-  { timestampe: true }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Friends", friends);

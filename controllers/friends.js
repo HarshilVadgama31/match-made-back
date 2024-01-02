@@ -62,6 +62,8 @@ exports.receivedRequests = async (req, res) => {
           const receiverUserData = await findUsers(request.senderId);
           // receiverUserData = {...receiverUserData, status:response.status}
           receiverUserData["status"] = request.status;
+          receiverUserData["requestId"] = request._id;
+
 
           return receiverUserData;
         })

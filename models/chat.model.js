@@ -9,7 +9,7 @@ const chat = new Schema({
             ref: "user"
         }
     ]
-},{timestampe:true});
+},{timestamps:true});
 
 
 module.exports = mongoose.model("Chat",chat);

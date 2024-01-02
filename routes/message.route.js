@@ -7,5 +7,6 @@ router.get("/*", (req, res) =>
 );
 
 router.post("/create", message.createMessage);
+router.post("/get-messages", message.getMessage);
 
 module.exports = router;

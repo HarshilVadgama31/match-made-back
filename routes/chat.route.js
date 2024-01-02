@@ -7,5 +7,6 @@ router.use(express.urlencoded({ extended: true }));
 router.get("/*", (req, res) => res.send("Error 404. Page Not Found."));
 
 router.post("/create", chat.createChat );
+router.post("/get-chat", chat.getChat );
 
 module.exports = router;
