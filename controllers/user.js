@@ -22,14 +22,14 @@ const generateToken = (user) => {
 
 exports.createUser = async (req, res, next) => {
   // console.log("Response from the FE: " + req.body.P1Dob);
-  console.log(req.body)
+  console.log(req.body);
   const { phone, gender, email, password } = req.body;
 
-	const user = await User.findOne({ phone });
-	if (user) return res.json({ message: "User already exists", error: false });
+  const user = await User.findOne({ phone });
+  if (user) return res.json({ message: "User already exists", error: false });
 
-	const salt = await bcrypt.genSalt(10);
-	const hashedPassword = await bcrypt.hash(password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
 
   await User.create({
     phone: phone,
@@ -37,9 +37,52 @@ exports.createUser = async (req, res, next) => {
     email: email,
     password: hashedPassword,
   })
-  .then((response) => {
-    const token = generateToken(response._id);
-    console.log(token);
+    .then((response) => {
+      const token = generateToken(response._id);
+      console.log(token);
+      res.cookie("token", token, {
+        withCredentials: true,
+        httpOnly: false,
+      });
+
+      response.password = null;
+      response.partnerPreference = null;
+      response._id = null;
+
+      res.status(200).json({
+        message: response,
+        error: false,
+      });
+      next();
+    })
+    .catch((error) => {
+      res.send({ message: error, error: true });
+    });
+};
+
+exports.loginUser = async (req, res, next) => {
+  const { phone, password } = req.body;
+
+  if (!phone || !password) {
+    return res.json({ message: "All fields are required" });
+  }
+  await User.findOne({ phone }).then(async (response) => {
+    if (!response) {
+      return res.json({
+        message: "Incorrect password or phone number",
+        error: false,
+      });
+    }
+
+    const auth = await bcrypt.compare(password, response.password);
+    if (!auth) {
+      return res.json({
+        message: "Access Denied. Incorrect password or phone number",
+        error: false,
+      });
+    }
+
+    const token = generateToken(response);
     res.cookie("token", token, {
       withCredentials: true,
       httpOnly: false,
@@ -53,61 +96,18 @@ exports.createUser = async (req, res, next) => {
       message: response,
       error: false,
     });
+
     next();
-  })
-  .catch((error) => {
-    res.send({ message: error, error: true });
   });
-};
-
-exports.loginUser = async (req, res, next) => {
-	const { phone, password } = req.body;
-
-	if (!phone || !password) {
-		return res.json({ message: "All fields are required" });
-	}
-	await User.findOne({ phone }).then(async (response) => {
-		if (!response) {
-			return res.json({
-				message: "Incorrect password or phone number",
-				error: false,
-			});
-		}
-
-		const auth = await bcrypt.compare(password, response.password);
-		if (!auth) {
-			return res.json({
-				message: "Access Denied. Incorrect password or phone number",
-				error: false,
-			});
-		}
-
-		const token = generateToken(response);
-		res.cookie("token", token, {
-			withCredentials: true,
-			httpOnly: false,
-		});
-
-		response.password = null;
-		response.partnerPreference = null;
-		response._id = null;
-
-		res.status(200).json({
-			message: response,
-			error: false,
-		});
-
-		next();
-	});
-	// const auth = await bcrypt.compare(password, user.password);
-	// if (!auth) {
-	// 	res.json({ message: "Incorrect password or email" });
-	// }
+  // const auth = await bcrypt.compare(password, user.password);
+  // if (!auth) {
+  // 	res.json({ message: "Incorrect password or email" });
+  // }
 };
 
 exports.updateUser = async (req, res) => {
-  const {userId,P8ProfilePicture,OtherData} = req.body;
-  console.log(req.body);
+  const { userId, P8ProfilePicture, OtherData } = req.body;
+  const data = JSON.parse(OtherData);
   const {
     P1FirstName,
     P1LastName,
@@ -143,8 +143,8 @@ exports.updateUser = async (req, res) => {
     P7PartnerProfession,
     P7PartnerAnnualIncome,
     P8ProfileEmail,
-    P8ProfileDescription
-  } = OtherData;
+    P8ProfileDescription,
+  } = data;
 
   await User.updateOne(
     { _id: userId },
@@ -219,13 +219,82 @@ exports.updateUser2 = async (req, res) => {
     });
 };
 
-
 // === MATCH-FEED ===
 exports.findMatch = async (req, res) => {
-  const {id} = req.body;
+  const { id } = req.body;
+  await User.find({ _id: id })
+    .then(async (response) => {
+      console.log(response[0].partnerPreference.maritialPreference);
 
-  await User.find({_id:id})
-    .then((response) => res.send({ message: response, error: false }))
+      await User.find(
+        {
+          $or: [
+            {
+              "partnerPreference.ageRange": {
+                $in: response[0].partnerPreference.ageRange,
+              },
+            },
+            {
+              "partnerPreference.maritialPreference": {
+                $in: response[0].partnerPreference.maritialPreference,
+              },
+            },
+            {
+              "partnerPreference.partnerDiet": {
+                $in: response[0].partnerPreference.partnerDiet,
+              },
+            },
+            {
+              "partnerPreference.partnerCity": {
+                $in: response[0].partnerPreference.partnerCity,
+              },
+            },
+            {
+              "partnerPreference.partnerState": {
+                $in: response[0].partnerPreference.partnerState,
+              },
+            },
+            {
+              "partnerPreference.partnerReligion": {
+                $in: response[0].partnerPreference.partnerReligion,
+              },
+            },
+            {
+              "partnerPreference.partnerCommunity": {
+                $in: response[0].partnerPreference.partnerCommunity,
+              },
+            },
+            {
+              "partnerPreference.partnerFamilyType": {
+                $in: response[0].partnerPreference.partnerFamilyType,
+              },
+            },
+            {
+              "partnerPreference.partnerQualification": {
+                $in: response[0].partnerPreference.partnerQualification,
+              },
+            },
+            {
+              "partnerPreference.partnerProfession": {
+                $in: response[0].partnerPreference.partnerProfession,
+              },
+            },
+            {
+              "partnerPreference.partnerAnnualIncome": {
+                $in: response[0].partnerPreference.partnerAnnualIncome,
+              },
+            },
+          ],
+          'hobby': { $in: ["Biking","Dancing"] }
+        },
+      )
+        .then((result) => {
+
+          // Add filtering to the result data for Match-Meter
+          res.send({ message: result, error: false });
+        })
+        .catch((error) => res.send({ message: error, error: true }));
+    })
     .catch((error) => res.send({ message: error, error: true }));
 };
 
