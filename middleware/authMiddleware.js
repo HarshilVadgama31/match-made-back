@@ -18,6 +18,7 @@ const authenticateToken = (req, res, next) => {
 		}
 
 		req.body.userId = decoded.userId;
+		console.log("From auth: "+req.body);
 		console.log("From auth: "+req.body.userId);
 		next();
 	});

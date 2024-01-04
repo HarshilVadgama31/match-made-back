@@ -30,10 +30,10 @@ router.post("/update", upload.single('P8ProfilePicture'), authenticateToken, use
 router.post("/login", user.loginUser);
 
 // === FAVOURITES ===
-router.post("/set-favourite", user.setFavourites);
+router.post("/set-favourite", authenticateToken, user.setFavourites);
 router.post("/favourites", user.favourites);
 
 // === MATCH-FEED ===
-router.post("/match-feed", user.findMatch);
+router.post("/match-feed", authenticateToken,user.findMatch);
 
 module.exports = router;

@@ -221,75 +221,365 @@ exports.updateUser2 = async (req, res) => {
 
 // === MATCH-FEED ===
 exports.findMatch = async (req, res) => {
-  const { id } = req.body;
-  await User.find({ _id: id })
+  const { userId } = req.body;
+  await User.find({ _id: userId })
     .then(async (response) => {
-      console.log(response[0].partnerPreference.maritialPreference);
+      console.log(response[0]);
 
-      await User.find(
+      // const pipeline = [
+      //   {
+      //     $match: {
+      //       $or: [
+      //         {
+                
+      //             $eq: [response[0].age, response[0].partnerPreference.ageRange]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].maritialStatus, response[0].partnerPreference.maritialPreference]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].diet, response[0].partnerPreference.partnerDiet]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].city, response[0].partnerPreference.partnerCity]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].state, response[0].partnerPreference.partnerState]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].religion, response[0].partnerPreference.partnerReligion]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].community, response[0].partnerPreference.partnerCommunity]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].familyType, response[0].partnerPreference.partnerFamilyType]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].qualification, response[0].partnerPreference.partnerQualification]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].profession, response[0].partnerPreference.partnerProfession]
+                
+      //         },
+      //         {
+                
+      //             $eq: [response[0].annualIncome, response[0].partnerPreference.partnerAnnualIncome]
+                
+      //         },
+      //       ],
+      //       // $in: [response[0].hobby, ["Biking", "Dancing"]] ,
+      //     },
+      //   },
+      //   {
+      //     $project: {
+      //       _id: 1, // Include the partner's ID in the result
+      //       score: {
+      //         $add: [
+      //           // Calculate scores for the 11 parameters
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].age, response[0].partnerPreference.ageRange],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].maritialStatus, response[0].partnerPreference.maritialPreference],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].diet, response[0].partnerPreference.partnerDiet],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].city, response[0].partnerPreference.partnerCity],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].state, response[0].partnerPreference.partnerState],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].religion, response[0].partnerPreference.partnerReligion],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].community, response[0].partnerPreference.partnerCommunity],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].familyType, response[0].partnerPreference.partnerFamilyType],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].qualification, response[0].partnerPreference.partnerQualification],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].profession, response[0].partnerPreference.partnerProfession],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           {
+      //             $cond: [
+      //               {
+                       
+      //                   $:[response[0].annualIncome, response[0].partnerPreference.partnerAnnualIncome],
+                      
+      //               },
+      //               10,
+      //               0,
+      //             ],
+      //           },
+      //           // { $cond: [{ $eq: ['$partnerPreference.param1', userPreferences.param1] }, 10, 0] },
+      //           // { $cond: [{ $eq: ['$partnerPreference.param2', userPreferences.param2] }, 10, 0] },
+      //           // ... (other 9 parameters)
+      //           // Calculate score for the hobby parameter (up to 10 points)
+      //           // {
+      //           //   $cond: [
+      //           //     {
+      //           //       "partnerPreference.hobby": {
+      //           //         $in: response[0].hobby,
+      //           //       },
+      //           //     },
+      //           //     10,
+      //           //     0,
+      //           //   ],
+      //           // },
+      //         ],
+      //       },
+      //     },
+      //   },
+      //   {
+      //     $sort: { score: -1 }, // Sort by score in descending order
+      //   },
+      // ];
+
+      // 
+
+      // await User.find(
+      //   {
+      //     $or: [
+      //       {
+      //         "partnerPreference.ageRange": {
+      //           $in: response[0].partnerPreference.ageRange,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.maritialPreference": {
+      //           $in: response[0].partnerPreference.maritialPreference,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerDiet": {
+      //           $in: response[0].partnerPreference.partnerDiet,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerCity": {
+      //           $in: response[0].partnerPreference.partnerCity,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerState": {
+      //           $in: response[0].partnerPreference.partnerState,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerReligion": {
+      //           $in: response[0].partnerPreference.partnerReligion,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerCommunity": {
+      //           $in: response[0].partnerPreference.partnerCommunity,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerFamilyType": {
+      //           $in: response[0].partnerPreference.partnerFamilyType,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerQualification": {
+      //           $in: response[0].partnerPreference.partnerQualification,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerProfession": {
+      //           $in: response[0].partnerPreference.partnerProfession,
+      //         },
+      //       },
+      //       {
+      //         "partnerPreference.partnerAnnualIncome": {
+      //           $in: response[0].partnerPreference.partnerAnnualIncome,
+      //         },
+      //       },
+      //     ],
+      //     'hobby': { $in: ["Biking","Dancing"] }
+      //   },
+      // )
+
+      // await User.aggregate(pipeline)
+      User.aggregate([
         {
-          $or: [
-            {
-              "partnerPreference.ageRange": {
-                $in: response[0].partnerPreference.ageRange,
-              },
-            },
-            {
-              "partnerPreference.maritialPreference": {
-                $in: response[0].partnerPreference.maritialPreference,
-              },
-            },
-            {
-              "partnerPreference.partnerDiet": {
-                $in: response[0].partnerPreference.partnerDiet,
-              },
-            },
-            {
-              "partnerPreference.partnerCity": {
-                $in: response[0].partnerPreference.partnerCity,
-              },
-            },
-            {
-              "partnerPreference.partnerState": {
-                $in: response[0].partnerPreference.partnerState,
-              },
-            },
-            {
-              "partnerPreference.partnerReligion": {
-                $in: response[0].partnerPreference.partnerReligion,
-              },
-            },
-            {
-              "partnerPreference.partnerCommunity": {
-                $in: response[0].partnerPreference.partnerCommunity,
-              },
-            },
-            {
-              "partnerPreference.partnerFamilyType": {
-                $in: response[0].partnerPreference.partnerFamilyType,
-              },
-            },
-            {
-              "partnerPreference.partnerQualification": {
-                $in: response[0].partnerPreference.partnerQualification,
-              },
-            },
-            {
-              "partnerPreference.partnerProfession": {
-                $in: response[0].partnerPreference.partnerProfession,
-              },
-            },
-            {
-              "partnerPreference.partnerAnnualIncome": {
-                $in: response[0].partnerPreference.partnerAnnualIncome,
-              },
-            },
-          ],
-          'hobby': { $in: ["Biking","Dancing"] }
+          $match: {
+            $or: [
+              { age: { $in: response[0].partnerPreference.ageRange } },
+              { maritialStatus: { $in: response[0].partnerPreference.maritialPreference } },
+              { diet: { $in: response[0].partnerPreference.partnerDiet } },
+              { city: { $in: response[0].partnerPreference.partnerCity } },
+              { religion: { $in: response[0].partnerPreference.partnerReligion } },
+              { community: { $in: response[0].partnerPreference.partnerCommunity } },
+              { familyType: { $in: response[0].partnerPreference.partnerFamilyType } },
+              { qualification: { $in: response[0].partnerPreference.partnerQualification } },
+              { profession: { $in: response[0].partnerPreference.partnerProfession } },
+              { annualIncome: { $in: response[0].partnerPreference.partnerAnnualIncome } },
+              { hobby: { $in: response[0].hobby } }
+            ]
+          }
         },
-      )
-        .then((result) => {
+        {
+          $addFields: {
+            partnerAge: { $cond: [{ $in: ['$age', response[0].partnerPreference.ageRange]}, 10, 0] },
+            partnerMaritialStatus: { $cond:[{ $in: ['$maritialStatus', response[0].partnerPreference.maritialPreference ]}, 10,0] },
+            partnerDiet: { $cond:[{ $in: ['$diet', response[0].partnerPreference.partnerDiet ]}, 10,0] },
+            partnerCity: { $cond:[{ $in: ['$city', response[0].partnerPreference.partnerCity ]}, 10,0] },
+            partnerReligion: { $cond:[{ $in: ['$religion', response[0].partnerPreference.partnerReligion ]}, 10,0] },
+            partnerCommunity: { $cond:[{ $in: ['$community', response[0].partnerPreference.partnerCommunity ]}, 10,0] },
+            partnerFamilyType: { $cond:[{ $in: ['$familyType', response[0].partnerPreference.partnerFamilyType ]}, 10,0] },
+            partnerQualification: { $cond:[{ $in: ['$qualification', response[0].partnerPreference.partnerQualification ]}, 10,0] },
+            partnerProfession: { $cond:[{ $in: ['$profession', response[0].partnerPreference.partnerProfession ]}, 10,0] },
+            partnerAnnualIncome: { $cond:[{ $in: ['$annualIncome', response[0].partnerPreference.partnerAnnualIncome ]}, 10,0] },
+            partnerHobby:{
+              $sum:{
+                $map:{
+                  input:"$hobby",
+                  as:'hobby',
+                  in:{ $cond: [{ $in: ['$$hobby', response[0].hobby] }, 10, 0] },
+                }
+              }
+            },
+            totalScore: {
+              $add: [
+                { $cond:[{ $in: ['$age', response[0].partnerPreference.ageRange] }, 10, 0] },
+                { $cond:[{ $in: ['$maritialStatus', response[0].partnerPreference.maritialPreference ]}, 10,0] },
+                { $cond:[{ $in: ['$diet', response[0].partnerPreference.partnerDiet ]}, 10,0] },
+                { $cond:[{ $in: ['$city', response[0].partnerPreference.partnerCity ]}, 10,0] },
+                { $cond:[{ $in: ['$religion', response[0].partnerPreference.partnerReligion ]}, 10,0] },
+                { $cond:[{ $in: ['$community', response[0].partnerPreference.partnerCommunity ]}, 10,0] },
+                { $cond:[{ $in: ['$familyType', response[0].partnerPreference.partnerFamilyType ]}, 10,0] },
+                { $cond:[{ $in: ['$qualification', response[0].partnerPreference.partnerQualification ]}, 10,0] },
+                { $cond:[{ $in: ['$profession', response[0].partnerPreference.partnerProfession ]}, 10,0] },
+                { $cond:[{ $in: ['$annualIncome', response[0].partnerPreference.partnerAnnualIncome ]}, 10,0] },
+                {
+                  $sum:{
+                    $map:{
+                      input:"$hobby",
+                      as:'hobby',
+                      in:{ $cond: [{ $in: ['$$hobby', response[0].hobby] }, 10, 0]},
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        {
+          $match: {
+            totalScore: { $gte: 10 }
+          }
+        },
+        {$project:{password:0,phone:0,partnerPreference:0,createdAt:0, updatedAt:0,__v:0}}
+      ])
 
+        .then((result) => {
+          // console.log(result);
           // Add filtering to the result data for Match-Meter
           res.send({ message: result, error: false });
         })
@@ -300,11 +590,13 @@ exports.findMatch = async (req, res) => {
 
 // === FAVOURITES ===
 exports.setFavourites = (req, res) => {
-  const { userId, favouriteUserId } = req.body;
+  const { userId, favourites} = req.body;
+  const data = JSON.parse(favourites);
+  console.log("fav "+data)
 
   Favourite.create({
     userId: userId,
-    favouriteUserId: favouriteUserId,
+    favouriteUserId: data.favouriteUserId,
   })
     .then((response) => {
       res.send({ message: response, error: false });
