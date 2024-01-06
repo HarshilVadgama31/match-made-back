@@ -42,5 +42,13 @@ router.post("/match-feed", authenticateToken,user.findMatch);
 router.post("/astro-insert", user.astroDataInsert);
 router.post("/astro-search", authenticateToken, user.astroDataSearch);
 
+// === GetIMage===
+router.post('/api/images',(req,res) =>{
+    const {filename} = req.body;
+    const filePath = path.join(__dirname,'uploads',filename);
+    console.log("Image path:"+filePath)
+    res.send(filePath)
+    // res.sendFile(filePath)
+})
 
 module.exports = router;

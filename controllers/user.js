@@ -19,19 +19,19 @@ exports.astroDataSearch = async (req, res) => {
   const { signs, userId } = req.body;
   console.log(signs);
   let newArray = [];
-  await User.findOne({ _id:userId }).then(async (response) => {
-    newArray = [signs,response.horoscope]
-    console.log(newArray)
-    await Astro.findOne({
-      signs: {$in:[...newArray]},
+  // await User.findOne({ _id:userId }).then(async (response) => {
+  //   newArray = [signs,response.horoscope]
+  //   console.log(newArray)
+  // });
+  await Astro.findOne({
+    signs: [...signs],
+  })
+    .then((response) => {
+      res.send(JSON.stringify({ message: response, error: false }));
     })
-      .then((response) => {
-        res.send(JSON.stringify({ message: response, error: false }));
-      })
-      .catch((error) => {
-        res.send(JSON.stringify({ message: error, error: true }));
-      });
-  });
+    .catch((error) => {
+      res.send(JSON.stringify({ message: error, error: true }));
+    });
 };
 
 exports.astroDataInsert = async (req, res) => {
@@ -210,7 +210,7 @@ exports.updateUser = async (req, res) => {
     horoscope = "Aquarius";
   } else if (isMonthInRange("02-01", "02-18", finalDate)) {
     horoscope = "Aquarius";
-  } else if (isMonthInRange("02-19", "02-29", finalDate)) {
+  } else if (isMonthInRange("02-19", "02-28", finalDate)) {
     horoscope = "Pisces";
   } else if (isMonthInRange("03-01", "03-20", finalDate)) {
     horoscope = "Pisces";
@@ -302,8 +302,10 @@ exports.updateUser = async (req, res) => {
       },
     }
   )
-    .then((response) => {
-      res.send(JSON.stringify({ message: response, error: false }));
+    .then(async (response) => {
+      await User.findOne({ _id:userId }).then(async (result) => {
+        res.send(JSON.stringify({ message: response, user:result, error: false }));
+      });
     })
     .catch((error) => {
       res.send(JSON.stringify({ message: error, error: true }));
@@ -910,16 +912,28 @@ exports.findMatch = async (req, res) => {
                   ],
                 },
                 {
-                  $sum: {
-                    $map: {
-                      input: "$hobby",
-                      as: "hobby",
-                      in: {
-                        $cond: [{ $in: ["$$hobby", response[0].hobby] }, 10, 0],
-                      },
+                  $cond: [
+                    {
+                      $in: [
+                        "$hobby",
+                        response[0].hobby,
+                      ],
                     },
-                  },
+                    10,
+                    0,
+                  ],
                 },
+                // {
+                //   $sum: {
+                //     $map: {
+                //       input: "$hobby",
+                //       as: "hobby",
+                //       in: {
+                //         $cond: [{ $in: ["$$hobby", response[0].hobby] }, 10, 0],
+                //       },
+                //     },
+                //   },
+                // },
               ],
             },
           },

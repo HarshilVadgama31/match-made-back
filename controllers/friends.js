@@ -42,6 +42,10 @@ exports.sentRequests = async (req, res) => {
 exports.sendRequest = async (req, res) => {
   const { userId, receiverId } = req.body;
 
+  const user = await Friends.findOne({$or:[{senderId:userId, receiverId:receiverId},{senderId:receiverId, receiverId:userId}] });
+  if (user)
+    return res.json({ message: "Already request processed", error: false });
+
   await Friends.create({
     senderId: userId,
     receiverId: receiverId,

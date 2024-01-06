@@ -5,7 +5,7 @@ const findUsers = async (id) => {
   let result = {};
   // console.log(id);
 
-  await User.findById(id,{firstName:1,lastName:1})
+  await User.findById(id,{firstName:1,lastName:1,profilePicture:1})
     .then((response) => (result = response.toJSON()))
     .catch((error) => error);
 

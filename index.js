@@ -1,7 +1,8 @@
 const http = require("http");
-
+const path = require("path")
 const express = require("express");
 const app = express();
+const defaultRouter = express.Router();
 
 const cookieParser = require("cookie-parser");
 const server = http.createServer(app);
@@ -46,6 +47,16 @@ app.use("/user", usersRouter);
 app.use("/chat", chatsRouter);
 app.use("/message", messagesRouter);
 app.use("/friends", friendsRouter);
+
+defaultRouter.use(express.urlencoded({ extended: true }));
+
+defaultRouter.post('/api/images',(req,res) =>{
+  const {filename} = req.body;
+  const filePath = path.join(__dirname,'uploads',filename);
+  console.log("Image path:"+filePath)
+  res.sendFile(filePath)
+})
+
 
 io.on("connection", (socket) => {
   console.log(socket.id);
