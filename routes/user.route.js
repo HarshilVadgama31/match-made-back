@@ -25,15 +25,22 @@ const upload = multer({storage});
 router.get("/*", (req, res) => res.send("Error 404. Page Not Found."));
 
 // === USERS ===
+router.post("/find", authenticateToken, user.findUser);
 router.post("/create", user.createUser);
 router.post("/update", upload.single('P8ProfilePicture'), authenticateToken, user.updateUser);
 router.post("/login", user.loginUser);
 
 // === FAVOURITES ===
-router.post("/set-favourite", authenticateToken, user.setFavourites);
-router.post("/favourites", user.favourites);
+router.post("/set-favourite",  authenticateToken,user.setFavourites);
+router.post("/favourites", authenticateToken, user.favourites);
+router.post("/unset-favourite", authenticateToken, user.unsetFavourites);
 
 // === MATCH-FEED ===
-router.post("/match-feed", authenticateToken,user.findMatch);
+router.post("/match-feed", authenticateToken,user.findMatch);   
+
+// === ASTRO-MATCH ===
+router.post("/astro-insert", user.astroDataInsert);
+router.post("/astro-search", authenticateToken, user.astroDataSearch);
+
 
 module.exports = router;

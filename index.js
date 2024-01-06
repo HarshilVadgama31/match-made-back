@@ -49,20 +49,13 @@ app.use("/friends", friendsRouter);
 
 io.on("connection", (socket) => {
   console.log(socket.id);
-  socket.on("get-id", async (Ids) => {
-    console.log("IDs " + Ids.senderId + " " + Ids.receiverId);
-    await Chat.find({ user: { $all: [Ids.senderId, Ids.receiverId] } })
-      .then(async (response) => {
-        console.log(response);
-        await Message.find({ chatId: response._id })
-          .then((result) =>
-            socket.emit("connection-id", { id: response._id, result: result })
-          )
-          .catch((error) => console.log(error));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  socket.on("get-id", (Id) => {
+    console.log("IDs " + Id.chatId);
+    // await Message.find({ chatId: Id.chatId })
+    //       .then((result) =>
+    //         socket.emit("connection-id", { id: chatId, result: result })
+    //       )
+    //       .catch((error) => console.log(error));
   });
 
   socket.on("message", (newMessage) => {

@@ -13,6 +13,7 @@ const user = mongoose.Schema(
 		weight: String,
 		dob: Date,
 		pob: String,
+		horoscope: String,
 		city: String,
 		state: String,
 		religion: String,

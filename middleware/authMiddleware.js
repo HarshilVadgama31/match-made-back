@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-
+	
 const authenticateToken = (req, res, next) => {
+	// console.log(req.body)
 	// const token = req.header("Authorization");
 	const token = req.cookies.token;
 	if (!token) {
@@ -17,9 +18,10 @@ const authenticateToken = (req, res, next) => {
 			});
 		}
 
-		req.body.userId = decoded.userId;
-		console.log("From auth: "+req.body);
-		console.log("From auth: "+req.body.userId);
+		req.body['userId'] = decoded.userId;
+		// console.log("From auth: "+req.body);
+		// console.log("From auth: "+req.body.userId);
+		// console.log("From auth: "+req.body.favouriteUserId);
 		next();
 	});
 };
